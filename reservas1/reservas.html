@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>reservas</title>
+</head>
+
+
+<body>
+<div id="main-content">
+<form action="send-message.php" method="post" name="comments" class="ajax-form validate-form scroll-on-error-form"><!-- post form to send-message.php - example: http://aureliend.com/lavilla-html/send-message.php.txt -->
+<div class="container">
+<div class="form-content-centered" id="comments">
+
+
+<h2 class="form-title">Reserva en un click!</h2>
+<p class="inner-container">
+<label for="check_in_date">Fecha de ingreso</label>
+<input id="check_in_date" name="check_in_date" class="input-datepicker" value="" type="text" data-validation="required date future_date" data-validation-format="mm/dd/yyyy" />
+</p> 
+<p class="inner-container">
+<label for="check_out_date">fechs de salida</label>
+
+<input id="check_out_date" name="check_out_date" class="input-datepicker" type="text" value="" data-validation="required date future_date check_out_date" data-validation-format="mm/dd/yyyy" />
+</p>
+
+<div class="inner-container">
+<div class="column-2">
+<p>
+<label for="adults_number">Numero de Adultos</label>
+<select id="adults_number" name="adults_number">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+</select>
+</p>
+</div> 
+<div class="column-2 column-last">
+<p>
+<label for="children_number">numero de Niños</label>
+<select id="children_number" name="children_number">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+</select>
+</p>
+</div>
+</div>
+
+<p>
+<label for="name">Su nombre</label>
+<input id="name" name="name" type="text" data-validation="required" />
+</p> 
+<p>
+<label for="email">Su Email</label>
+<input id="email" name="email" type="text" data-validation="required email" />
+</p> 
+<p>
+<label for="room">Tipo de Habitacion</label>
+<select id="room" name="room" data-validation="required">
+<option disabled selected value="">Select a room type</option>
+<option value="Habitacion 1"> Habitacion Single</option>
+<option value="Habitacion 2">Habitacion Doble </option>
+<option value="Habitacion 3">Habitacion matrimonial </option>
+<option value="Habitacion 4">Habitacion triple </option>
+<option value="Habitacion 5">Habitacion Cuadruple</option>
+</select>
+</p> 
+
+<p class="aligncenter">
+<input class="aligncenter button" type="submit" value="Send request" />
+</p>
+<!--<p class="form-processing">
+Procesando su reserva...
+</p>-->
+
+</div><!-- end .form-content-centered -->
+<div class="form-result-wrapper"></div>
+
+</div><!-- end .container -->
+</form>
+</body>
+</html>

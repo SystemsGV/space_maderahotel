@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Documento sin título</title>
+</head>
+
+<body>
+
+<p>
+    <form action="sendmail.php" method="post">
+
+        Name:<br /> <input type="text" name="name" size=70/><br/>
+        E-mail:<br /> <input type="text" name="email" size=70/><br/>
+        Phone:<br /> <input type="text" name="telephone" size=70/><br/>
+        Country:<br /> <input type="text" name="country" size=70/><br/>
+        In party:<br /> <input type="text" name="inparty" size=70/><br/>
+        Arrival date / Time:<br /> <input type="text" name="arrival" size=70/><br/>
+        Departure date / Time:<br /> <input type="text" name="departure" size=70/><br/>
+        Select an apartment or penthouse:<br/>
+        <select name="reservethis"><option name="copacabana">Copacabana</option>
+        <option name="02bedroomscopacabana">--- 02 bedrooms oceanfront</option> 
+        <option name="03bedroomsoceanview">--- 03 bedrooms oceanview</option>
+        <option name="03bedroomsoceanfront">--- 03 bedrooms oceanfront</option>
+        <option name="penthousecopacabana">--- Penthouse</option>
+        <option name="ipanema">Ipanema</option>
+        <option name="03bedroomsoceanfront">--- 03 bedrooms oceanfront</option>
+        <option name="03bedroomsoceanview">--- 03 bedrooms oceanview</option>
+        <option name="04bedroomsupperclass">--- 04 bedrooms upper class</option>
+        <option name="penthouseipanema">--- Penthouse</option>
+        </select><br/>
+        Request and comments:<br /> <textarea name="comments" cols="50" rows="8" size=80></textarea><br/>
+        <input type="submit" value="Send" /> <input type="reset" value="Clear" />
+
+    </form>
+</p>
+</body>
+</html>
