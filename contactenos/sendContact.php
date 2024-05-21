@@ -3,23 +3,22 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'contactenos/PHPMailer/src/Exception.php';
-require 'contactenos/PHPMailer/src/PHPMailer.php';
-require 'contactenos/PHPMailer/src/SMTP.php';
+header('Content-Type: text/html; charset=UTF-8');
+
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
 // Datos del Formulario capturando data
-$name = htmlspecialchars($_POST['nombre'], ENT_QUOTES, 'UTF-8');
+$name = htmlspecialchars($_POST['name'], ENT_QUOTES, 'UTF-8');
 $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 $telefono = htmlspecialchars($_POST['telefono'], ENT_QUOTES, 'UTF-8');
-$checkin = $_POST['checkin'];
-$checkout = $_POST['checkout'];
-$adultos = $_POST['adultos'];
-$ninos = $_POST['ninos'];
+$message_content = htmlspecialchars($_POST['message'], ENT_QUOTES, 'UTF-8');
 
 // Configuración del servidor de correo
 $mail = new PHPMailer(true);
 try {
-    // Configuración del servidor SMTP
+    // Configuración del servidor
     $mail->isSMTP();
     $mail->Host = 'mail.maderaverdehotel.com.pe'; // Cambia esto al servidor SMTP que estás usando
     $mail->SMTPAuth = true;
@@ -35,9 +34,9 @@ try {
 
     // Contenido del correo
     $mail->isHTML(true);
-    $mail->Subject = 'Reserva de Hotel - Madera Verde';
+    $mail->Subject = 'Hotel Madera Verde - Formulario Contacto';
 
-    // Estructura del correo electrónico
+    // Estructura del correo electrónico con CSS en línea
     $mail->Body    = utf8_decode("
     <html>
     <head>
@@ -56,7 +55,7 @@ try {
                 border-radius: 10px;
             }
             .header {
-                background-color: #4C9546;
+                background-color: #6c757d;
                 color: white;
                 padding: 10px;
                 border-radius: 10px 10px 0 0;
@@ -86,10 +85,9 @@ try {
     <body>
         <div class='container'>
             <div class='header'>
-                <h2>Reserva de Hotel - Madera Verde</h2>
+                <h2>Información de Contacto</h2>
             </div>
             <div class='content'>
-                <p><b>Información del cliente:</b></p>
                 <table>
                     <tr>
                         <th>Nombre</th>
@@ -100,35 +98,22 @@ try {
                         <td>$email</td>
                     </tr>
                     <tr>
-                        <th>Teléfono</th>
+                        <th>Número de Teléfono</th>
                         <td>$telefono</td>
                     </tr>
                     <tr>
-                        <th>Check-in</th>
-                        <td>$checkin</td>
-                    </tr>
-                    <tr>
-                        <th>Check-out</th>
-                        <td>$checkout</td>
-                    </tr>
-                    <tr>
-                        <th>Adultos</th>
-                        <td>$adultos</td>
-                    </tr>
-                    <tr>
-                        <th>Niños</th>
-                        <td>$ninos</td>
+                        <th>Mensaje</th>
+                        <td>$message_content</td>
                     </tr>
                 </table>
             </div>
             <div class='footer'>
-                <p><b>Madera Verde - Formulario de Reserva</b></p>
+                <p><b>Madera Verde -  Formulario Contacto</b></p>
             </div>
         </div>
     </body>
     </html>
 ");
-
 
     $mail->send();
     echo '<script language="javascript">alert("El mensaje ha sido enviado correctamente."); window.location.href="http://maderaverdehotel.com.pe/";</script>';
