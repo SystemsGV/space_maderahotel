@@ -3,9 +3,9 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require './contactenos/PHPMailer/src/Exception.php';
-require './contactenos/PHPMailer/src/PHPMailer.php';
-require './contactenos/PHPMailer/src/SMTP.php';
+require '../contactenos/PHPMailer/src/Exception.php';
+require '../contactenos/PHPMailer/src/PHPMailer.php';
+require '../contactenos/PHPMailer/src/SMTP.php';
 
 // Datos del Formulario capturando data
 $name = htmlspecialchars($_POST['nombre'], ENT_QUOTES, 'UTF-8');
