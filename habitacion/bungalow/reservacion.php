@@ -1,69 +1,137 @@
 <?php
-$nombre = $_POST['nombre'];
-$email = $_POST['email'];
-$telefono = $_POST['telefono'];
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'contactenos/PHPMailer/src/Exception.php';
+require 'contactenos/PHPMailer/src/PHPMailer.php';
+require 'contactenos/PHPMailer/src/SMTP.php';
+
+// Datos del Formulario capturando data
+$name = htmlspecialchars($_POST['nombre'], ENT_QUOTES, 'UTF-8');
+$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+$telefono = htmlspecialchars($_POST['telefono'], ENT_QUOTES, 'UTF-8');
 $checkin = $_POST['checkin'];
 $checkout = $_POST['checkout'];
 $adultos = $_POST['adultos'];
 $ninos = $_POST['ninos'];
 
-$fecha = explode('/',$checkin );
-$fecha_con_formato = $fecha[1].'/'.$fecha[0].'/'.$fecha[2];
+// Configuración del servidor de correo
+$mail = new PHPMailer(true);
+try {
+    // Configuración del servidor SMTP
+    $mail->isSMTP();
+    $mail->Host = 'mail.maderaverdehotel.com.pe'; // Cambia esto al servidor SMTP que estás usando
+    $mail->SMTPAuth = true;
+    $mail->Username = 'adm@maderaverdehotel.com.pe'; // Cambia esto a tu dirección de correo
+    $mail->Password = 'Adr567T+44'; // Cambia esto a tu contraseña de correo
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
 
-$fecha1 = explode('/',$checkout );
-$fecha_con_formato1 = $fecha1[1].'/'.$fecha1[0].'/'.$fecha1[2];
+    // Recipientes
+    $mail->setFrom($email, $name);
+    $mail->addAddress('adm@maderaverdehotel.com.pe'); // Añadir destinatario principal
+    $mail->addBCC('adm.lima@maderaverdehotel.com.pe'); // Añadir destinatario en copia oculta
 
-function comprobar_email($email){ 
-   	$mail_correcto = 0; 
-   	//compruebo unas cosas primeras 
-   	if ((strlen($email) >= 6) && (substr_count($email,"@") == 1) && (substr($email,0,1) != "@") && (substr($email,strlen($email)-1,1) != "@")){ 
-      	if ((!strstr($email,"'")) && (!strstr($email,"\"")) && (!strstr($email,"\\")) && (!strstr($email,"\$")) && (!strstr($email," "))) { 
-         	//miro si tiene caracter . 
-         	if (substr_count($email,".")>= 1){ 
-            	//obtengo la terminacion del dominio 
-            	$term_dom = substr(strrchr ($email, '.'),1); 
-            	//compruebo que la terminación del dominio sea correcta 
-            	if (strlen($term_dom)>1 && strlen($term_dom)<5 && (!strstr($term_dom,"@")) ){ 
-               	//compruebo que lo de antes del dominio sea correcto 
-               	$antes_dom = substr($email,0,strlen($email) - strlen($term_dom) - 1); 
-               	$caracter_ult = substr($antes_dom,strlen($antes_dom)-1,1); 
-               	if ($caracter_ult != "@" && $caracter_ult != "."){ 
-                  	$mail_correcto = 1; 
-               	} 
-            	} 
-         	} 
-      	} 
-   	} 
-   	if ($mail_correcto) 
-      	return 1; 
-   	else 
-      	return 0; 
+    // Contenido del correo
+    $mail->isHTML(true);
+    $mail->Subject = 'Reserva de Hotel - Madera Verde';
+
+    // Estructura del correo electrónico
+    $mail->Body    = utf8_decode("
+    <html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                color: #333333;
+            }
+            .container {
+                width: 100%;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #dddddd;
+                border-radius: 10px;
+            }
+            .header {
+                background-color: #4C9546;
+                color: white;
+                padding: 10px;
+                border-radius: 10px 10px 0 0;
+                text-align: center;
+            }
+            .content {
+                padding: 20px;
+            }
+            .content table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            .content table, .content th, .content td {
+                border: 1px solid #dddddd;
+            }
+            .content th, .content td {
+                padding: 10px;
+                text-align: left;
+            }
+            .footer {
+                margin-top: 20px;
+                text-align: center;
+                color: #777777;
+            }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <h2>Reserva de Hotel - Madera Verde</h2>
+            </div>
+            <div class='content'>
+                <p><b>Información del cliente:</b></p>
+                <table>
+                    <tr>
+                        <th>Nombre</th>
+                        <td>$name</td>
+                    </tr>
+                    <tr>
+                        <th>Correo Electrónico</th>
+                        <td>$email</td>
+                    </tr>
+                    <tr>
+                        <th>Teléfono</th>
+                        <td>$telefono</td>
+                    </tr>
+                    <tr>
+                        <th>Check-in</th>
+                        <td>$checkin</td>
+                    </tr>
+                    <tr>
+                        <th>Check-out</th>
+                        <td>$checkout</td>
+                    </tr>
+                    <tr>
+                        <th>Adultos</th>
+                        <td>$adultos</td>
+                    </tr>
+                    <tr>
+                        <th>Niños</th>
+                        <td>$ninos</td>
+                    </tr>
+                </table>
+            </div>
+            <div class='footer'>
+                <p><b>Madera Verde - Formulario de Reserva</b></p>
+            </div>
+        </div>
+    </body>
+    </html>
+");
+
+
+    $mail->send();
+    echo '<script language="javascript">alert("El mensaje ha sido enviado correctamente."); window.location.href="http://maderaverdehotel.com.pe/";</script>';
+} catch (Exception $e) {
+    echo "Por favor verifica la información. Error: {$mail->ErrorInfo}";
 }
-
-
-$msg = "<font face=’Verdana’ size=’3'><b>Formulario de Reservacion</b></font><br><hr><p>";
-$msg .= "<font face=’Verdana’ size=’1'><b>Nombre:</b><font color=#ff0000> \t$nombre</font></font><br>";
-$msg .= "<font face=’Verdana’ size=’1'><b>E-mail:</b><font color=#ff0000> \t$email</font></font><br>";
-$msg .= "<font face=’Verdana’ size=’1'><b>Telefono:</b><font color=#ff0000> \t$telefono</font></font><br>";
-$msg .= "<font face=’Verdana’ size=’1'><b>Fecha de Ingreso:</b><font color=#ff0000> \t$fecha_con_formato</font></font><br>";
-$msg .= "<font face=’Verdana’ size=’1'><b>Fecha de Salida:</b><font color=#ff0000> \t$fecha_con_formato1</font></font><br>";
-$msg .= "<font face=’Verdana’ size=’1'><b>Numero de Adultos:</b><font color=#ff0000> \t$adultos</font></font><br>";
-$msg .= "<font face=’Verdana’ size=’1'><b>Numero de Ni&ntilde;os:</b><font color=#ff0000> \t$ninos</font></font><br>";
-
-
-$mensagem = "$msg";
-$rem = "Enviado desde mi Pagina Web";
-$dest = "adm@maderaverdehotel.com.pe";
-$subject = "Hotel Madera Verde - Reservaciones";
-$headers = "MIME-Version: 1.0\r\n";
-$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-$headers .= 'Bcc: adm.lima@maderaverdehotel.com.pe' . "\r\n";
-$headers .= "From: $rem \r\n";
-if(!mail($dest,$subject,$mensagem,$headers)){
-print "Por favor verifica la informacion";
-} else {
-echo '<script language="javascript"> alert("El mensaje ha sido enviado correctamente."); </script>';
-echo '<script language="JavaScript"> window.location.href ="http://maderaverdehotel.com.pe/" </script>';
-
-}
-?>
