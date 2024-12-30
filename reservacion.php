@@ -7,38 +7,60 @@ require 'contactenos/PHPMailer/src/Exception.php';
 require 'contactenos/PHPMailer/src/PHPMailer.php';
 require 'contactenos/PHPMailer/src/SMTP.php';
 
-// Datos del Formulario capturando data
-$name = htmlspecialchars($_POST['nombre'], ENT_QUOTES, 'UTF-8');
-$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-$telefono = htmlspecialchars($_POST['telefono'], ENT_QUOTES, 'UTF-8');
-$checkin = $_POST['checkin'];
-$checkout = $_POST['checkout'];
-$adultos = $_POST['adultos'];
-$ninos = $_POST['ninos'];
+$recaptchaSecret = "6Lfy1akqAAAAAAwx4wfvzRpX12G0OwfBg7RPgVu0";
+$recaptchaResponse = $_POST['g-recaptcha-response'];
 
-// Configuración del servidor de correo
-$mail = new PHPMailer(true);
-try {
-    // Configuración del servidor SMTP
-    $mail->isSMTP();
-    $mail->Host = 'mail.maderaverdehotel.com.pe'; // Cambia esto al servidor SMTP que estás usando
-    $mail->SMTPAuth = true;
-    $mail->Username = 'adm@maderaverdehotel.com.pe'; // Cambia esto a tu dirección de correo
-    $mail->Password = 'Adr567T+44'; // Cambia esto a tu contraseña de correo
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->Port = 587;
+$url = 'https://www.google.com/recaptcha/api/siteverify';
+$data = [
+    'secret' => $recaptchaSecret,
+    'response' => $recaptchaResponse,
+];
 
-    // Recipientes
-    $mail->setFrom($email, $name);
-    $mail->addAddress('adm@maderaverdehotel.com.pe'); // Añadir destinatario principal
-    $mail->addBCC('adm.lima@maderaverdehotel.com.pe'); // Añadir destinatario en copia oculta
+$options = [
+    'http' => [
+        'method' => 'POST',
+        'header' => 'Content-type: application/x-www-form-urlencoded',
+        'content' => http_build_query($data),
+    ],
+];
 
-    // Contenido del correo
-    $mail->isHTML(true);
-    $mail->Subject = 'Reserva de Hotel - Madera Verde';
+$context = stream_context_create($options);
+$response = file_get_contents($url, false, $context);
+$result = json_decode($response, true);
 
-    // Estructura del correo electrónico
-    $mail->Body    = utf8_decode("
+if ($result['success'] && $result['score'] >= 0.5) {
+    // Datos del Formulario capturando data
+    $name = htmlspecialchars($_POST['nombre'], ENT_QUOTES, 'UTF-8');
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $telefono = htmlspecialchars($_POST['telefono'], ENT_QUOTES, 'UTF-8');
+    $checkin = $_POST['checkin'];
+    $checkout = $_POST['checkout'];
+    $adultos = $_POST['adultos'];
+    $ninos = $_POST['ninos'];
+
+    // Configuración del servidor de correo
+    $mail = new PHPMailer(true);
+    try {
+        // Configuración del servidor SMTP
+        $mail->isSMTP();
+        $mail->Host = 'mail.maderaverdehotel.com.pe'; // Cambia esto al servidor SMTP que estás usando
+        $mail->SMTPAuth = true;
+        $mail->Username = 'adm@maderaverdehotel.com.pe'; // Cambia esto a tu dirección de correo
+        $mail->Password = 'Adr567T+44'; // Cambia esto a tu contraseña de correo
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        // Recipientes
+        $mail->setFrom($email, $name);
+        $mail->addAddress('adm@maderaverdehotel.com.pe'); // Añadir destinatario principal
+        $mail->addBCC('adm.lima@maderaverdehotel.com.pe'); // Añadir destinatario en copia oculta
+
+        // Contenido del correo
+        $mail->isHTML(true);
+        $mail->Subject = 'Reserva de Hotel - Madera Verde';
+
+        // Estructura del correo electrónico
+        $mail->Body    = utf8_decode("
     <html>
     <head>
         <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
@@ -130,8 +152,11 @@ try {
 ");
 
 
-    $mail->send();
-    echo '<script language="javascript">alert("El mensaje ha sido enviado correctamente."); window.location.href="http://maderaverdehotel.com.pe/";</script>';
-} catch (Exception $e) {
-    echo "Por favor verifica la información. Error: {$mail->ErrorInfo}";
+        $mail->send();
+        echo '<script language="javascript">alert("El mensaje ha sido enviado correctamente."); window.location.href="http://maderaverdehotel.com.pe/";</script>';
+    } catch (Exception $e) {
+        echo "Por favor verifica la información. Error: {$mail->ErrorInfo}";
+    }
+} else {
+    echo '<script language="javascript">alert("Error al enviar mensaje."); window.location.href="http://maderaverdehotel.com.pe/";</script>';
 }

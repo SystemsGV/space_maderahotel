@@ -1683,6 +1683,20 @@
     <script type='text/javascript' src='wp-includes/js/jquery/ui/tabs.mine899.js?ver=1.11.4'></script>
     <script type='text/javascript'
         src='wp-content/plugins/js_composer/assets/lib/bower/jquery-ui-tabs-rotate/jquery-ui-tabs-rotate.mina752.js?ver=4.11.2.1'></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lfy1akqAAAAACUbUN6ChzULS4E7UmKj2KMQgrM-"></script>
+
+    <script>
+        grecaptcha.ready(function () {
+            document.querySelector('form').addEventListener('submit', function (e) {
+                e.preventDefault(); // Previene el envío directo del formulario
+                grecaptcha.execute('6Lfy1akqAAAAACUbUN6ChzULS4E7UmKj2KMQgrM-', { action: 'submit' }).then(function (token) {
+                    document.querySelector('form').insertAdjacentHTML('beforeend', `<input type="hidden" name="g-recaptcha-response" value="${token}">`);
+                    e.target.submit(); // Envía el formulario después de agregar el token
+                });
+            });
+        });
+    </script>
+
 
 </body>
 
