@@ -1,6 +1,27 @@
 <?php
-	// crear variable para el receptor de correo. Imprimir todo el formulario de html en php
-	$email_to = "sugerencias@maderaverdehotel.com.pe";
+// crear variable para el receptor de correo. Imprimir todo el formulario de html en php
+$email_to = "sugerencias@maderaverdehotel.com.pe";
+
+$secretKey = "6Ld1U6QqAAAAALdaZVz75nyTSvI6kgY-cGGj3wcD";
+$recaptchaResponse =  $_POST['g-recaptcha-response'];
+
+// Validar reCAPTCHA
+$url = "https://www.google.com/recaptcha/api/siteverify";
+$data = array(
+	'secret' => $secretKey,
+	'response' => $recaptchaResponse
+);
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+$response = curl_exec($ch);
+curl_close($ch);
+
+$responseKeys = json_decode($response, true);
+
+if (isset($responseKeys["success"]) && $responseKeys["success"] === true) {
+
 	//Datos del Cliente
 	$first_name = $_POST['nombre'];
 	$first_ape = $_POST['apellidos'];
@@ -10,18 +31,18 @@
 	$distrito = $_POST['distrito'];
 	$domicilio = $_POST['domicilio'];
 	$telefono = $_POST['telefono'];
-    $email_from = $_POST['email'];
+	$email_from = $_POST['email'];
 	//Información General:
 	$subject = $_POST['tipoderq'];
-    $opcion = $_POST['opcion'];
+	$opcion = $_POST['opcion'];
 	$descripcion = $_POST['descripcion'];
-	$monto = $_POST['monto'];	
+	$monto = $_POST['monto'];
 	//Detalle de su reclamo:
 	$tipoderq = $_POST['subject'];
 	$fecha = $_POST['fecha'];
 	$message = $_POST['message'];
 	//Creando estructura de html para los datos
-    $email_message ="
+	$email_message = "
         <h2>Datos de la Persona que presenta el Reclamo:</h2>
 		<table>
 			<tr>
@@ -73,21 +94,24 @@
 				<td><h2><b>Hotel Madera Verde<h2></b></td> <td></td>
 			</tr>
 		</table>";
-		
+
 	$header = "MIME-Version: 1.0\r\n";
-	$header = 'From: '.$email_from."\r\n".
-	$header .= 'Bcc: adm@maderaverdehotel.com.pe, informes@maderaverdehotel.com.pe' . "\r\n";
+	$header = 'From: ' . $email_from . "\r\n" .
+		$header .= 'Bcc: adm@maderaverdehotel.com.pe, informes@maderaverdehotel.com.pe' . "\r\n";
 	$header .= 'Content-Type: text/html; charset=utf-8' . "\r\n";
-	$header .= 'Cc: '.$email_from. "\r\n";
-	$header .= 'X-Mailer: PHP/' . phpversion() ."\r\n";
-	
-	if(@mail($email_to, $subject, $email_message, $header))
-	{
+	$header .= 'Cc: ' . $email_from . "\r\n";
+	$header .= 'X-Mailer: PHP/' . phpversion() . "\r\n";
+
+	if (@mail($email_to, $subject, $email_message, $header)) {
 		//Sale un alerta de confirmación de que el mensaje se ha enviado.
 		echo '<script language="javascript"> alert("El mensaje ha sido enviado correctamente."); </script>';
 		//Redirección a la pagina que gusten
 		echo '<script language="JavaScript"> window.location.href ="https://www.maderaverdehotel.com.pe/" </script>';
 		//header('location:www.lagranjavilla/zonaecologica/');
+	} else {
+		echo "Por favor verifica la informacion";
 	}
-	else { echo "Por favor verifica la informacion"; }
-?>
+} else {
+	echo '<script language="javascript"> alert("Por favor verifica el reCAPTCHA."); </script>';
+	echo '<script language="JavaScript"> window.location.href ="https://www.maderaverdehotel.com.pe/libroreclamo/librodereclamaciones.html" </script>';
+}
