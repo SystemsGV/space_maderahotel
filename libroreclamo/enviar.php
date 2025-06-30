@@ -2,7 +2,7 @@
 // crear variable para el receptor de correo. Imprimir todo el formulario de html en php
 $email_to = "sugerencias@maderaverdehotel.com.pe";
 
-$secretKey = "6Ld1U6QqAAAAALdaZVz75nyTSvI6kgY-cGGj3wcD";
+$secretKey = "6Ld6BHMrAAAAAHtZZAThuGttuQOq5LBaDbi9uOdc";
 $recaptchaResponse =  $_POST['g-recaptcha-response'];
 
 // Validar reCAPTCHA
